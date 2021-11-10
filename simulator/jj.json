@@ -1,0 +1,11 @@
+{ "side": "buy",
+    "price": "4468689.0",
+    "size": "0.00003",
+    "name": "order226265647",
+    "status": "created",
+    "asset": "BTC",
+    "currency": "INR",
+    "userId": "1",
+    "product_id": "59e48756e5cf8e0c9471ef56",
+    "zebOrderId": "zeb_226265647",
+    "order_type": "limit" }

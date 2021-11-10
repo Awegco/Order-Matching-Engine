@@ -1,0 +1,21 @@
+{
+  "name": "websockets",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markbrown4/websockets.git"
+  },
+  "bugs": {
+    "url": "https://github.com/markbrown4/websockets/issues"
+  },
+  "homepage": "https://github.com/markbrown4/websockets#readme",
+  "description": "",
+  "dependencies": {
+    
+    "socket.io": "^2.0.3",
+    "ui-grid-auto-fit-columns": "^1.1.4"
+  }
+}
