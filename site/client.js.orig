@@ -1,0 +1,137 @@
+var app = angular.module('wsAppTesting', ['ui.grid', 'ui.grid.resizeColumns', 'ui.grid.edit']);
+
+
+app.controller('MyCtrl', function ($scope) {
+
+    
+
+
+    $scope.orders = [];
+    $scope.matchedOrders = [];
+    $scope.gridOptions = {};
+    $scope.gridOptions.columnDefs = [
+        { name: 'createdDate' }
+    ];
+
+    
+    var query = window.location.search.substring(1);
+    var env = query.split("=");
+    console.log(env[1]);
+
+    if (env[1] == "local")
+    socket = io.connect('http://localhost:9999/', { transports: ['websocket'] });
+    else
+    socket = io.connect('wss://tradeserver1.azurewebsites.net/', { transports: ['websocket','polling'] });
+
+
+    console.log(socket);
+
+
+
+    socket.on('requestorderexchange', function (data) {
+        console.log("Order Matcher stop requested now");
+    });
+
+
+    socket.on('order', function (data) {
+        let cd = new Date(data.createdDate);
+        let md = new Date(data.lastModifiedDate);
+        data.createdDate = cd.toLocaleString();
+        data.lastModifiedDate = md.toLocaleString();
+        $scope.orders.push(data);
+        $scope.$apply();
+        //console.log("order placed",data);
+        console.log("orders", $scope.orders);
+        //socket.emit('my other event', { my: 'data' });
+    });
+
+    socket.on('matchedorder', function (data) {
+        let cd = new Date(data.createdDate);
+        let md = new Date(data.lastModifiedDate);
+        data.createdDate = cd.toLocaleString();
+        data.lastModifiedDate = md.toLocaleString();
+        var usefulData = new Object();
+        usefulData.createdDate = data.createdDate;
+        usefulData.side = data.side || data.is_buy_;
+        usefulData.size = data.size;
+        usefulData.open_qty = data.open_qty_;
+        usefulData.order_qty = data.order_qty_;
+        usefulData.price = data.price;
+        usefulData.status = data.status;
+        usefulData.orderId = data.order_id_;
+        usefulData._id = data._id;
+
+
+        $scope.matchedOrders.push(usefulData);
+        $scope.$apply();
+        //console.log("matched order" ,data);
+        console.log("matched orders", $scope.matchedOrders);
+        //socket.emit('my other event', { my: 'data' });
+    });
+    socket.on('order_ready_for_settlement', function (data) {
+        console.log("order_ready_for_settlement > ",data);
+    });
+    let count = 0;
+    let orderId = 0;
+    function randomIntFromInterval(min, max) {
+        return (Math.random() * (max - min) + min).toFixed(4);
+    }
+    function randomUserId() {
+        return "000" + Math.ceil(Math.random() * 4);
+    }
+
+    /*
+    document.querySelector('#send').addEventListener('click', function (event) {
+    */
+    $scope.sendBulkOrder = function () {
+
+        for (i = 0; i <= 10; i++) {
+            count++;
+            let isbuy = false
+            if (count % 2 == 0) {
+                isbuy = true;
+            }
+
+          //  setTimeout(
+                socket.emit('order', {
+                    action: 'bulkPost',
+                    headers: { netsesstionid: 'first1' },
+                    message: [{ side: isbuy, price: randomIntFromInterval(4400.0000, 4800.0000), size: randomIntFromInterval(0.01000, 5.0000), "name": "order" + count, status: "created", asset: "BTC", currency: "INR", userId: randomUserId(), product_id: "59e48756e5cf8e0c9471ef56" }]
+            })
+                //, i * 1000);
+
+
+        }
+    }
+
+    /*
+    });
+    */
+
+    $scope.requestStop = function () {
+
+        socket.emit('requestorderexchange', { action: 'bulkPost', message: [{ stop: "true" }] });
+       
+    };
+
+
+    $scope.sendOrder = function () {
+
+        //socket.emit('order', { action: 'bulkPost', message: [{ side: $scope.isbuy, price: $scope.price, size: $scope.qty, "name": "order" + orderId, status: "created", asset: "BTC", currency: "USD" }] });
+
+        socket.emit('order', {
+            action: 'bulkPost',
+<<<<<<< HEAD
+            headers: { usertoken: "abc123" },
+            message: [{ side: $scope.isbuy, price: $scope.price, size: $scope.qty, "name": "order" + orderId, status: "created", asset: "BTC", currency: "USD" }]
+=======
+            headers: { netsessionid: "first1" },
+             message: [{ side: $scope.isbuy, price: $scope.price, size: $scope.qty, "name": "order" + orderId, status: "created", asset: "BTC", currency: "INR", userId: randomUserId(), product_id: "59e48756e5cf8e0c9471ef56" }]
+
+>>>>>>> f0d3f35061ff3e4f3c2dee8a40ff7497e7fd21f4
+        });
+        orderId++;
+    };
+
+
+});

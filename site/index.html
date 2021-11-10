@@ -1,0 +1,277 @@
+﻿<!--<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style media="screen">
+        td {
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>-->
+
+
+
+
+
+
+<!DOCTYPE html>
+<html ng-app="wsAppTesting" ng-controller="MyCtrl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <title>rosa Order Matching Client</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
+    
+     
+  </head>
+
+  <body>
+
+     <div style="text-align : center">
+            <h1>This feature is currently disabled. Please post orders from rosa App.</h1>
+
+     </div>
+
+      <div class="starter-template" >
+           
+               
+                <ul id="log"></ul>
+
+          <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+             
+              <div class="collapse navbar-collapse" id="navbarNav">
+                  <ul class="navbar-nav">
+                      <li class="nav-item active">
+                          <a class="nav-link" href="index.html">Client <span class="sr-only">(current)</span></a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="dashboard.html">DashBoard</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="orderbook.html">OrderBook</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="orderbooksocket.html">OrderBook Socket</a>
+                      </li>
+					  <li class="nav-item">
+                          <a class="nav-link" target="_blank" href="candle_chart.html">Candle chart</a>
+                      </li>
+
+                  </ul>
+              </div>
+          </nav>
+
+
+                <div class="container" style="margin-top:100px;">
+
+                        <div class="card">
+                                <div class="card-header">
+                                  <h3>Test Client</h3> <h4 class="card-title">Set Order Parameters</h4>
+                                </div>
+                                <div class="card-body" style="display:inline-flex">
+                                  
+                                  
+                                  <div class="col-sm-6">
+                                      
+                                      <!--div class="input-group">
+                                          <span class="input-group-addon">User</span>
+                                          <select ng-model="user" class="form-control">
+                                             <option ng-repeat="session in sessions" ng-selected="session.sessionId = 'order_user'" value="{{session.sessionId}}">
+                                                 {{session.userName}} - {{session.role}}
+                                             </option>
+                                          </select>
+                                      </div>
+                                      <br/-->
+
+                                      <div class="input-group">
+                                          <span class="input-group-addon">Side</span>
+                                          <select ng-model="isbuy" class="form-control">
+                                              <option value=true>Buy</option>
+                                              <option value=false>Sell</option>
+                                          </select>
+                                      </div>
+                                      <br />
+                                  <div class="input-group">
+                                    <span class="input-group-addon" >Price</span>
+                                    <input type="text" ng-model="price" class="form-control"  aria-describedby="basic-addon3">
+                                  </div>
+                                 <br/>
+                                  <div class="input-group">
+                                    <span class="input-group-addon" >Quantity</span>
+                                    <input type="text" ng-model="qty" class="form-control"  aria-describedby="basic-addon3">
+                                  </div>
+                                  <br/>
+                               
+                                        
+                                          <button id="send" ng-click="sendOrder()" type="button" class="btn btn-primary">Post Order</button>
+
+
+
+                                          <button disabled="disabled" id="send" ng-click="sendBulkOrder()" type="button" class="btn btn-primary">Post Bulk Order</button>
+
+                                      <button id="send" ng-click="cleanUp()" type="button" class="btn btn-primary">CleanUp {{cleanUpLog}}</button>
+                                     
+                                   </div>
+                                    <!--div class="col-sm-6">
+
+
+                                        <div class="input-group">
+                                            <span class="input-group-addon">Side</span>
+                                            <select ng-model="isbuy" class="form-control">
+                                                <option value=true>Buy</option>
+                                                <option value=false>Sell</option>
+                                            </select>
+                                        </div>
+                                        <br/>
+                                        
+
+                                    </div-->
+
+
+                              </div>
+
+
+                              <div class="card">
+                                    <div class="card-header">
+                                      Orders
+                                    </div>
+                                    <div class="card-body">
+                                   
+                                            <div class="gridContainer">
+                                                    <div ui-grid="{ data: orders }" class="myGrid"   ui-grid-resize-columns  ui-grid-edit ui-grid-auto-scroll></div>
+                                                    </div>
+
+                                     
+                                    </div>
+                                  </div>         
+                                  <div class="card">
+                                        <div class="card-header">
+                                         Matched Orders
+                                        </div>
+                                        <div class="card-body">
+                                       
+                                                
+                                                    <div class="gridContainer">
+                                                  <div ui-grid="{ data: matchedOrders }" class="myGrid"   ui-grid-resize-columns  ui-grid-edit ui-grid-auto-scroll></div>
+                                              </div>
+    
+                                       
+                                        </div>
+                                      </div>        
+                   
+                    
+                 <!-- -->
+
+                  
+              <!--
+                    <div class="row">
+                <div class="col-sm-6">
+              
+              
+                    <div class="alert alert-primary grid-header" role="alert">  Orders</div>
+                <ul class="list-group">
+                       
+                       <li ng-repeat="order in orders" class="list-group-item">
+                        <span class="badge badge-primary">Order ID: {{order._id}}</span>
+                        <span class="badge badge-primary">Order Name : {{order.name}}</span>  
+                            <span class="badge badge-secondary">Qty : {{order.qty}}</span>
+                            <span class="badge badge-secondary">Price : {{order.price}}</span>
+                            <span class="badge badge-success">createdDate : {{order.createdDate}}</span>
+                            <span class="badge badge-danger">is_buy : {{order.is_buy}}</span>
+                            <span class="badge badge-warning">lastModifiedDate : {{order.lastModifiedDate}}</span>
+                            <span class="badge badge-info">status</span>
+                            
+                        </li>
+                </ul>
+                </div>
+                <div class="col-sm-6">
+                    <div class="alert alert-success  grid-header" role="alert"> Matched Orders</div>
+                <ul class="list-group">
+                       <li ng-repeat="order in matchedOrders" class="list-group-item">
+                            <span class="badge badge-primary">Order ID: {{order._id}}</span>
+                            <span class="badge badge-primary">Order Name : {{order.name}}</span>  
+                            <span class="badge badge-secondary">Qty : {{order.qty}}</span>
+                            <span class="badge badge-secondary">Price : {{order.price}}</span>
+                            <span class="badge badge-secondary"></span>
+                            <span class="badge badge-secondary"></span>
+                            <span class="badge badge-success">createdDate : {{order.createdDate}}</span>
+                            <span class="badge badge-danger">is_buy : {{order.is_buy}}</span>
+                            <span class="badge badge-warning">lastModifiedDate : {{order.lastModifiedDate}}</span>
+                            <span class="badge badge-info">status</span>
+                            <span class="badge badge-secondary">Action : {{order.result.action}}</span>
+                            <span class="badge badge-secondary">Matched : {{order.result.matched}}</span>
+                            <span class="badge badge-secondary">Matched Id : {{order.result.order.matchedOrder.order.orderid}}</span>
+                            <span class="badge badge-secondary">Qty : {{order.qty}}</span>
+                            <span class="badge badge-secondary">Qty : {{order.qty}}</span>
+                       </li>
+                </ul>
+        
+
+
+                </div>
+                </div>
+                </div>
+
+            -->
+
+    </div>
+
+    </div>
+
+    
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
+    <script src="bower_components/ui-grid-auto-scroll/js/auto-scroll.js"></script>
+    
+    <script src="socket.io.js"></script>
+    <script src="client.js"></script>
+   
+  
+  
+          </div>
+  </body>
+</html>
+
+
+
+
+
+
+
+<!--
+<html ng-app="wsAppTesting">
+<head>
+    <script src="socket.io.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/ng-websocket/ng-websocket.js"></script>
+    
+    <script src="angularClient.js"></script>
+</head>
+<body>
+    <p>
+        <button id="send">Send Message</button>
+        <button id="close">Close</button>
+    </p>
+    <ul id="log"></ul>
+    <div ng-controller="MyCtrl"></div>
+</body>
+</html>
+-->

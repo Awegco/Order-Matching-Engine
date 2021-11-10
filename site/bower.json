@@ -1,0 +1,29 @@
+{
+  "name": "bower",
+  "description": "bower",
+  "main": "bower",
+  "authors": [
+    "y"
+  ],
+  "license": "y",
+  "keywords": [
+    "test"
+  ],
+  "homepage": "y",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-grid": "^4.0.7",
+    "angular": "^1.6.6",
+    "ng-websocket": "^0.2.1",
+    "socket.io-client": "^2.0.3",
+    "ui-grid-auto-scroll": "^1.0.1",
+    "angular-animate": "^1.6.6"
+  }
+}

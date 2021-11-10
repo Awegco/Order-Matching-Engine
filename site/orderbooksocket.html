@@ -1,0 +1,241 @@
+﻿<!--<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style media="screen">
+        td {
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>-->
+
+
+<!DOCTYPE html>
+<html  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <title>rosa Order Matching Client</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+      <link href="css/custom.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
+    
+     
+  </head>
+
+  <body ng-app="wsAppTesting" ng-controller="MyCtrl">
+
+     
+
+      <div class="starter-template">
+           
+          <ul id="log"></ul>
+
+          <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+             
+              <div class="collapse navbar-collapse" id="navbarNav">
+                  <ul class="navbar-nav">
+                          <a class="nav-link" href="orderbooksocket.html">OrderBook</a>
+                      </li>
+					  <li class="nav-item">
+                          <a target="_blank"  class="nav-link" href="candle_chart.html">Candle chart</a>
+                      </li>
+                  </ul>
+              </div>
+          </nav>
+
+          <div class="ob-body">
+		  <div class="container" style="margin-top:70px;display: inline-flex; margin-left:auto; margin-right:auto;">
+		  
+			  <div class="card">
+						<div class="card-header">
+                           Ticker
+						</div>
+            <div class="card-body" style="padding: 0px !important;">
+                <table class="table">
+                    <tr>
+                        <td><b>Market Price</b> : {{ticker.marketPrice}}</td>
+                        <td><b>BUY</b> : {{ticker.topBuy}}</td>
+                        <td><b>SELL</b> : {{ticker.topSell}}</td>
+                        <td><b>Volume Traded (24Hr)</b> : {{ticker.volumeTraded24hr || ticker.aggVolumeTraded}}</td>
+                        <td><b>Price Change (24Hr)</b> : {{ticker.priceChangePercent24hr | number : 2}} % </td>
+                    </tr>
+                </table> 
+              </div>
+            </div>
+		  </div>
+		 
+
+          <div class="container" style="margin-top:20px; display: inline-flex;">
+
+              <div class="card" style="width: 20rem; ">
+                  <div class="card-header">
+                      Buy Orders
+                  </div>
+                  <div class="card-body" style="padding: 0px !important;">
+                      <table class="table table-hover table-sm">
+                          <thead class="thead-dark">
+                              <tr><th>Price</th><th>Qty</th></tr>
+                          </thead>
+                          <tr ng-repeat="buyorder in orderBookBuyOrdersArr | orderBy:'-price'| limitTo:10 " ng-if="buyorder.price > 0 && buyorder.aggQty > 0 && buyorder.orderCount > 0">
+                              <td>{{buyorder.price}}</td>
+                              <td>{{buyorder.aggQty}} ({{buyorder.orderCount}})</td>
+                              
+                          </tr>
+                      </table>
+
+                  </div>
+              </div>
+              <div class="card" style="width: 20rem; ">
+                  <div class="card-header">
+                      Sell Orders
+                  </div>
+                  <div class="card-body" style="padding: 0px !important;">
+
+                      <table class="table table-hover table-sm">
+                          <thead class="thead-dark">
+                              <tr><th>Price</th><th>Qty</th></tr>
+                          </thead>
+                          <tr  ng-repeat="sellorder in orderBookSellOrdersArr | orderBy:'price' | limitTo:10 " ng-if="sellorder.price > 0 && sellorder.aggQty > 0 && sellorder.orderCount > 0">
+                              <td>{{sellorder.price}}</td>
+                              <td>{{sellorder.aggQty}} ({{sellorder.orderCount}})</td>
+                              
+                          </tr>
+                      </table>
+
+
+                  </div>
+              </div>
+     
+					
+         
+              <div class="card"  style="width:20rem;" >
+                  <div class="card-header">
+                      Trade History
+                  </div> 
+                  <div class="card-body" style="padding: 0px !important;">
+
+                      <table class="table table-hover table-sm">
+                          <thead class="thead-dark">
+                              <tr><th>Price</th><th>Size</th><th>Time</th><!--<th>Asset</th><th>Currency</th><th>Side</th>--></tr>
+                          </thead>
+                          <tr ng-repeat="matchedPair in matchedPairs | orderBy:'-createdDate'  |limitTo:10 "  ng--if="matchedPair.fill_qty>0"  > <!-- ng--if="currorder.matched_qty>0" -->
+                             
+                              <td>{{matchedPair.fill_price}}</td>
+                              <td>{{matchedPair.fill_qty}}</td>
+                              <td>{{matchedPair.createdDate | date:"HH:mm:ss"}}</td>
+                          </tr>
+                      </table>
+
+
+                  </div>
+              </div>
+
+              <div class="card" style="width: 40rem; ">
+                  <div class="card-header">
+                      Ticker History
+                  </div>
+                  <div class="card-body" style="padding: 0px !important;">
+                      <table class="table  table-hover table-sm ">
+                          <thead class="thead-dark">
+                              <tr><th>MP</th><th>BUY</th><th>SELL</th><th>VT</th><th>PCP</th><th>Time</th><!--<th>Asset</th><th>Currency</th><th>Side</th>--></tr>
+                          </thead>
+                          <tr ng-repeat="ticker in tickerHistory  | orderBy:'-secondsId' |limitTo:10">
+                              
+                              <td>{{ticker.marketPrice}}</td>
+                              <td>{{ticker.topBuy}}</td>
+                              <td>{{ticker.topSell}}</td>
+                              <td>{{ticker.volumeTraded24hr}}</td>
+                              <td>{{ticker.priceChangePercent24hr | number : 2}} %</td>
+                              <td>{{ticker.secondsId*1000  | date:"HH:mm:ss"}}</td>  
+                          </tr>
+                      </table>
+                  </div>
+              </div>
+
+
+
+
+          </div>
+              <div class="container" style="margin-top:70px;display: inline-flex; margin-left:auto; margin-right:auto;">
+
+                
+              </div>
+
+              <!--<div class="container" style="margin-top:70px;display: inline-flex; margin-left:auto; margin-right:auto;">
+
+                  <div class="card" style="width: 60rem; ">
+                      <div class="card-header">
+                         
+                      </div>
+                      <div class="card-body" style="padding: 0px !important;">
+                          <table class="table">
+                              <tr>
+                                  <td><b>Orders</b> : {{serverStats.orderCount}}</td>
+                                  <td><b>MatchedPairs</b> : {{serverStats.matchPairCount}}</td>
+                                  <td><b>Tickers</b> : {{serverStats.tickerCount}}</td>
+                                  <td><b>Candles</b> : {{serverStats.candleCount}}</td>
+                              </tr>
+                          </table>
+                          </div>
+                      </div>
+              </div>-->
+              
+         </div>
+<!--  Old Order Book start -->
+
+<!-- Old order Book end -->
+
+          <br/><br /><br /><br /><br /><br />
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+          <script src="https://code.angularjs.org/1.6.6/angular.js"></script>
+          <script src="https://code.angularjs.org/1.6.6/angular-animate.js"></script>
+
+    
+    <script src="socket.io.js"></script>
+    <script src="orderbooksocket.js"></script>
+   
+  
+  
+          </div>
+  </body>
+</html>
+
+
+
+
+
+
+
+<!--
+<html ng-app="wsAppTesting">
+<head>
+    <script src="socket.io.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/ng-websocket/ng-websocket.js"></script>
+    
+    <script src="angularClient.js"></script>
+</head>
+<body>
+    <p>
+        <button id="send">Send Message</button>
+        <button id="close">Close</button>
+    </p>
+    <ul id="log"></ul>
+    <div ng-controller="MyCtrl"></div>
+</body>
+</html>
+-->
